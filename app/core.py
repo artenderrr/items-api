@@ -1,5 +1,6 @@
 import os
 import json
+from fastapi.encoders import jsonable_encoder
 from app.schemas import Item
 
 class ItemManager:
@@ -10,6 +11,10 @@ class ItemManager:
     def item_ids(self) -> list[int]:
         item_file_names = os.listdir(self.path_to_items)
         return [int(i.split(".")[0]) for i in item_file_names]
+    
+    def item_id_exists(self, item_id: int) -> bool:
+        item_file = f"{self.path_to_items}/{item_id}.json"
+        return os.path.isfile(item_file)
 
     def get_item(self, item_id: int) -> Item | None:
         """ Retrieve item by its ID """
@@ -28,3 +33,13 @@ class ItemManager:
             if item and (category is None or item.category == category):
                 items.append(item)
         return items
+    
+    def create_item(self, item_id: int, item: Item) -> bool:
+        """ Create new item from given model and return completion status """
+        if self.item_id_exists(item_id):
+            return False
+        new_item_file = f"{self.path_to_items}/{item_id}.json"
+        with open(new_item_file, "w") as file:
+            json_compatible_item_data = jsonable_encoder(item)
+            json.dump(json_compatible_item_data, file, indent=4)
+        return True
