@@ -10,6 +10,11 @@ router = APIRouter()
 def root() -> dict[str, str]:
     return {"message": "Hello World!"}
 
+@router.get("/items")
+def get_items(category: str | None = None) -> list[Item]:
+    items = ItemManager().get_items(category)
+    return items
+
 @router.get("/items/{item_id}")
 def get_item(item_id: Annotated[int, Path(gt=0)]) -> Item:
     item = ItemManager().get_item(item_id)
