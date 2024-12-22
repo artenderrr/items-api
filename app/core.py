@@ -9,10 +9,12 @@ class ItemManager:
 
     @property
     def item_ids(self) -> list[int]:
-        item_file_names = os.listdir(self.path_to_items)
-        return [int(i.split(".")[0]) for i in item_file_names]
+        """ Get all existing item IDs """
+        item_files = os.listdir(self.path_to_items)
+        return [int(i.split(".")[0]) for i in item_files]
     
     def item_id_exists(self, item_id: int) -> bool:
+        """ Check if an item with the specified ID exists """
         item_file = f"{self.path_to_items}/{item_id}.json"
         return os.path.isfile(item_file)
 
@@ -20,8 +22,8 @@ class ItemManager:
         """ Retrieve item by its ID """
         try:
             path_to_item = f"{self.path_to_items}/{item_id}.json"
-            with open(path_to_item, encoding="utf-8") as f:
-                return Item(**json.load(f))
+            with open(path_to_item, encoding="utf-8") as file:
+                return Item(**json.load(file))
         except FileNotFoundError:
             return None
         
