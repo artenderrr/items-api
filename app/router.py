@@ -28,3 +28,10 @@ def create_item(item_id: Annotated[int, Path(gt=0)], item: Item) -> Item:
     if not success:
         raise HTTPException(status_code=409, detail="Item with specified ID already exists")
     return item
+
+@router.delete("/items/{item_id}", status_code=204)
+def delete_item(item_id: Annotated[int, Path(gt=0)]) -> None:
+    success = ItemManager().delete_item(item_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Item with specified ID doesn't exist")
+    return None

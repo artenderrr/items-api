@@ -45,3 +45,11 @@ class ItemManager:
             json_compatible_item_data = jsonable_encoder(item)
             json.dump(json_compatible_item_data, file, indent=4)
         return True
+    
+    def delete_item(self, item_id: int) -> bool:
+        """ Delete existing item and return completion status """
+        if not self.item_id_exists(item_id):
+            return False
+        item_file = f"{self.path_to_items}/{item_id}.json"
+        os.remove(item_file)
+        return True
