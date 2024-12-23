@@ -4,11 +4,7 @@ from fastapi import Path, HTTPException
 from app.schemas import Item, UpdatedItemFields
 from app.core import ItemManager
 
-router = APIRouter()
-
-@router.get("/")
-def root() -> dict[str, str]:
-    return {"message": "Hello World!"}
+router = APIRouter(tags=["items"])
 
 @router.get("/items")
 def get_items(category: str | None = None) -> list[Item]:
