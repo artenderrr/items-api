@@ -1,7 +1,8 @@
 import os
 import json
+from typing import cast
 from fastapi.encoders import jsonable_encoder
-from app.schemas import Item
+from app.schemas import Item, UpdatedItemFields
 
 class ItemManager:
     def __init__(self, path_to_items: str = "app/data"):
@@ -48,6 +49,16 @@ class ItemManager:
         with open(new_item_file_path, "w") as file:
             json_compatible_item_data = jsonable_encoder(item)
             json.dump(json_compatible_item_data, file, indent=4)
+        return True
+    
+    def update_item(self, item_id: int, updated_item_fields: UpdatedItemFields) -> bool:
+        """ Update existing item with updated values provided and return completion status """
+        if not self.item_id_exists(item_id):
+            return False
+        old_item = cast(Item, self.get_item(item_id))
+        updated_item_dict = old_item.model_dump() | updated_item_fields.model_dump(exclude_defaults=True)
+        self.delete_item(item_id)
+        self.create_item(item_id, Item(**updated_item_dict))
         return True
     
     def delete_item(self, item_id: int) -> bool:

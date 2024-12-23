@@ -1,7 +1,7 @@
-from typing import Annotated
+from typing import Annotated, cast
 from fastapi import APIRouter
 from fastapi import Path, HTTPException
-from app.schemas import Item
+from app.schemas import Item, UpdatedItemFields
 from app.core import ItemManager
 
 router = APIRouter()
@@ -28,6 +28,13 @@ def create_item(item_id: Annotated[int, Path(gt=0)], item: Item) -> Item:
     if not success:
         raise HTTPException(status_code=409, detail="Item with specified ID already exists")
     return item
+
+@router.put("/items/{item_id}")
+def update_item(item_id: Annotated[int, Path(gt=0)], updated_item_fields: UpdatedItemFields) -> Item:
+    success = ItemManager().update_item(item_id, updated_item_fields)
+    if not success:
+        raise HTTPException(status_code=404, detail="Item with specified ID doesn't exist")
+    return cast(Item, ItemManager().get_item(item_id))
 
 @router.delete("/items/{item_id}", status_code=204)
 def delete_item(item_id: Annotated[int, Path(gt=0)]) -> None:
