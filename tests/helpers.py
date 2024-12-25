@@ -1,7 +1,9 @@
 from app.schemas import Item
 from app.security import API_KEY
+from app.core import ItemManager
 
 auth_headers = {"X-Key": API_KEY}
+item_manager = ItemManager()
 
 default_items = [
     Item(
@@ -86,3 +88,11 @@ test_items = {
         quantity=2
     )
 }
+
+def populate_items(item_list):
+    for item_id, item in enumerate(item_list, start=1):
+        item_manager.create_item(item_id, item)
+
+def restore_default_items():
+    item_manager.delete_all_items()
+    populate_items(default_items)
