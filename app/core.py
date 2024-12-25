@@ -68,3 +68,8 @@ class ItemManager:
         item_file_path = self.get_item_file_path(item_id)
         os.remove(item_file_path)
         return True
+    
+    def delete_all_items(self) -> None:
+        """ Delete all existing items """
+        for item_id in self.item_ids:
+            self.delete_item(item_id)
